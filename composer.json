@@ -1,0 +1,29 @@
+{
+  "name": "php-zap/zap-routing",
+  "description": "The Zap Routing component.",
+  "keywords": ["routing", "zap"],
+  "license": "MIT",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Gabor Zelei",
+      "email": "gabor.zelei@gmail.com"
+    },
+    {
+      "name": "Antonio Lopez",
+      "email": "antonio.lopez.zapata@gmail.com"
+    }
+  ],
+  "require" : {
+    "php" : ">=7.0.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Zap\\Routing\\": "src/",
+      "Test\\": "tests/"
+    }
+  }
+}
