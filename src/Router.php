@@ -78,7 +78,7 @@ class Router
             $route = $this->matcher->findMatch($uri, $method);
 
             if (is_null($route)) {
-                throw new InvalidRouteException(sprintf('Invalid route definition: %s %s', $method, $uri));
+                throw new InvalidRouteException(sprintf('Invalid route definition: %s %s', strtoupper($method), $uri));
             }
 
             return $route->process();

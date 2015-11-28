@@ -19,7 +19,7 @@ class Route
     /**
      * @var string
      */
-    private $uri;
+    private $uri = '';
 
     /**
      * @var string
@@ -34,17 +34,17 @@ class Route
     /**
      * @var string
      */
-    private $controllerClass;
+    private $controllerClass = '';
 
     /**
      * @var string
      */
-    private $controllerMethod;
+    private $controllerMethod = '';
 
     /**
      * @var array
      */
-    private $userVariables;
+    private $userVariables = [];
 
     /**
      * Route constructor.
@@ -96,9 +96,9 @@ class Route
 
     /**
      * Returns callback defined for this route
-     * @return \Closure
+     * @return null|\Closure
      */
-    public function getCallback() : \Closure
+    public function getCallback()
     {
         return $this->callback;
     }

@@ -21,8 +21,8 @@ class RouteCollection implements \ArrayAccess
      */
     public function add(Route $route) : RouteCollection
     {
-        $key = $this->getKeyFromString($route->getUri());
-        $this->offsetSet($key, $route);
+        $this->offsetSet($route->getUri(), $route);
+        return $this;
     }
 
     /**
@@ -32,8 +32,9 @@ class RouteCollection implements \ArrayAccess
      */
     public function remove($route) : RouteCollection
     {
-        $key = $this->getKeyFromString($route instanceof Route ? $route->getUri() : $route);
+        $key = $route instanceof Route ? $route->getUri() : $route;
         $this->offsetUnset($key);
+        return $this;
     }
 
     /**
@@ -94,15 +95,5 @@ class RouteCollection implements \ArrayAccess
         }
 
         return $this;
-    }
-
-    /**
-     * Hashes input string into an md5 hash
-     * @param string $input
-     * @return string
-     */
-    private function getKeyFromString(string $input) : string
-    {
-        return md5($input);
     }
 }

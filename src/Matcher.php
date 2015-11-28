@@ -37,9 +37,9 @@ class Matcher
      * Attempts to find a matching route for input $uri and $method
      * @param string $uri
      * @param string $method
-     * @return Route
+     * @return Route|null
      */
-    public function findMatch(string $uri, string $method) : Route
+    public function findMatch(string $uri, string $method)
     {
         foreach ($this->router->getRouteCollection() as $route) {
             if ($this->isRouteAMatch($route, $uri, $method)) {
