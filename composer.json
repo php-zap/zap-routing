@@ -4,18 +4,17 @@
   "keywords": ["routing", "zap"],
   "license": "MIT",
   "type": "project",
-  "authors": [
-    {
+  "authors": [{
       "name": "Gabor Zelei",
       "email": "gabor.zelei@gmail.com"
-    },
-    {
+  },{
       "name": "Antonio Lopez",
       "email": "antonio.lopez.zapata@gmail.com"
-    }
-  ],
+  }],
   "require" : {
-    "php" : ">=7.0.0"
+    "php": ">=7.0.0",
+    "php-zap/zap-common": "master",
+    "php-zap/zap-http": "master"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0"
@@ -25,5 +24,13 @@
       "Zap\\Routing\\": "src/",
       "Test\\": "tests/"
     }
-  }
+  },
+  "minimum-stability": "dev",
+  "repositories": [{
+    "type": "vcs",
+    "url": "https://github.com/php-zap/zap-common.git"
+  }, {
+    "type": "vcs",
+    "url": "https://github.com/php-zap/zap-http.git"
+  }]
 }
