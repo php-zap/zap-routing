@@ -42,6 +42,11 @@ class Route
     private $controllerMethod;
 
     /**
+     * @var array
+     */
+    private $userVariables;
+
+    /**
      * Route constructor.
      * @param string $uri
      */
@@ -113,11 +118,11 @@ class Route
 
     /**
      * Gets ControllerCaller for this route
-     * @return ControllerCaller
+     * @return ControllerDispatcher
      */
-    public function getController() : ControllerCaller
+    public function getControllerDispatcher() : ControllerDispatcher
     {
-        return new ControllerCaller($this->controllerClass, $this->controllerMethod);
+        return new ControllerDispatcher($this);
     }
 
     /**
@@ -134,19 +139,59 @@ class Route
     }
 
     /**
+     * Returns full namespaces classpath for any configured controller class for this route
+     * @return string
+     */
+    public function getControllerClass() : string
+    {
+        return $this->controllerClass;
+    }
+
+    /**
+     * Returns method to call on controller class when processing route
+     * @return string
+     */
+    public function getControllerMethod() : string
+    {
+        return $this->controllerMethod;
+    }
+
+    /**
+     * Returns a list of user variables to pass to controller/callback when route is processed
+     * @return array
+     */
+    public function getUserVariables() : array
+    {
+        return $this->userVariables;
+    }
+
+    /**
+     * Stores a list of user variables to pass to controller/callback when route is processed
+     * @param array $userVariables
+     * @return Route
+     */
+    public function setUserVariables(array $userVariables = []) : Route
+    {
+        $this->userVariables = $userVariables;
+        return $this;
+    }
+
+    /**
      * Executes route
      * @return mixed                    @todo Change to Zap\Http\Response|array|bool|mixed
      * @throws InvalidRouteException
      */
     public function process()
     {
+        $userVariables = $this->getUserVariables();
+
         try {
-            if (!empty($this->controllerClass) && !empty($this->controllerMethod)) {
+            if (!empty($this->getControllerClass()) && !empty($this->getControllerMethod())) {
                 // Attempt to call controller
-                return $this->getController()->callController();
-            } elseif (is_callable($this->callback)) {
-                // Call user callback in an empty context
-                return $this->callback->call(new \stdClass());
+                return $this->getControllerDispatcher()->dispatchController($userVariables);
+            } elseif (!empty($this->getCallback()) && is_callable($this->getCallback())) {
+                // Call user callback with an empty context
+                return $this->getCallback()->call(new \stdClass(), $userVariables);
             } else {
                 throw new InvalidRouteException('No execution plan defined for route');
             }

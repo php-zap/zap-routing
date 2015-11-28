@@ -1,6 +1,7 @@
 <?php
 
 namespace Zap\Routing;
+use Zap\Routing\UriSegment\Comparator;
 
 /**
  * Class Matcher
@@ -16,7 +17,7 @@ class Matcher
      * Gets reset when we start to investigate a new route, or find a match
      * @var array
      */
-    private $currentRouteVariables = [];
+    private $routeVariablesBuffer = [];
 
     /**
      * @var Router
@@ -41,9 +42,8 @@ class Matcher
     public function findMatch(string $uri, string $method) : Route
     {
         foreach ($this->router->getRouteCollection() as $route) {
-            $this->currentRouteVariables = [];
             if ($this->isRouteAMatch($route, $uri, $method)) {
-                $this->currentRouteVariables = [];
+                $route->setUserVariables($this->routeVariablesBuffer);
                 return $route;
             }
         }
@@ -52,45 +52,31 @@ class Matcher
     }
 
     /**
-     * Return true if input uri segments match the template defined in a Routes uri segments, false otherwise
+     * Returns true if input URI segments match the template defined in a Route's uri segments, false otherwise
+     * Also extracts user variables passed for Route from input URI segments
      * @param array $uriTemplateSegments
      * @param array $inputUriSegments
      * @return bool
      */
     private function compareSegmentLists(array $uriTemplateSegments, array $inputUriSegments) : bool
     {
+        $this->routeVariablesBuffer = [];
+
         foreach ($inputUriSegments as $position => $inputSegment) {
-            if (!$this->compareSegments($uriTemplateSegments[$position], $inputSegment)) {
+            $result = Comparator::create($uriTemplateSegments[$position], $inputSegment)->compare();
+
+            if (!$result->isSuccess()) {
                 return false;
+            }
+
+            $segmentName = $result->getSegmentName();
+
+            if (!empty($segmentName)) {
+                $this->routeVariablesBuffer[$segmentName] = $result->getSegmentValue();
             }
         }
 
         return true;
-    }
-
-    /**
-     * Checks if input segment matches template segment
-     * @param string $template
-     * @param string $actual
-     * @return bool
-     */
-    private function compareSegments(string $template, string $actual) : bool
-    {
-        $segment = new UriTemplateSegment($template);
-
-        if ($segment->isStatic()) {
-            return ($template == $actual);
-        }
-
-        $valueWithType = $segment->getValueWithType($actual);
-        $variableName = $segment->getVariableName();
-
-        if (!empty($variableName) && (($valueWithType === 0) || ($valueWithType === 0.0) || !empty($valueWithType))) {
-            $this->currentRouteVariables[$variableName] = $valueWithType;
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -102,11 +88,12 @@ class Matcher
      */
     private function isRouteAMatch(Route $route, string $uri, string $method) : bool
     {
-        if (($route->getUri() == $uri)) {
-            return true;
-        }
-
         if ($route->getMethod() == $method) {
+
+            if (($route->getUri() == $uri)) {
+                return true;
+            }
+
             $routeUriArray = $this->sliceUri($route->getUri());
             $inputUriArray = $this->sliceUri($uri);
             return $this->compareSegmentLists($routeUriArray, $inputUriArray);
