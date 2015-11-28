@@ -63,7 +63,7 @@ class UriSegmentTemplate
                 return !empty($actualString);
                 break;
             case static::SEGMENT_TYPE_REGEX:
-                return boolval(preg_match('/' . $this->regex . '/', $actualString)) == true;
+                return boolval(preg_match($this->regex, $actualString)) == true;
                 break;
             default:
                 return ($this->rawTemplateString == $actualString);

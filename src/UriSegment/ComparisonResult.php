@@ -3,7 +3,7 @@
 namespace Zap\Routing\UriSegment;
 
 /**
- * Class ComparatorResult
+ * Class ComparisonResult
  * @package Zap\Routing\UriSegment
  * @author Gabor Zelei
  */
