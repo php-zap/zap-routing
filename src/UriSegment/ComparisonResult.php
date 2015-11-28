@@ -7,7 +7,7 @@ namespace Zap\Routing\UriSegment;
  * @package Zap\Routing\UriSegment
  * @author Gabor Zelei
  */
-class ComparatorResult
+class ComparisonResult
 {
     /**
      * @var string
@@ -26,9 +26,9 @@ class ComparatorResult
 
     /**
      * Chainable factory method for convenience
-     * @return ComparatorResult
+     * @return ComparisonResult
      */
-    public static function create() : ComparatorResult
+    public static function create() : ComparisonResult
     {
         return new static();
     }
@@ -45,9 +45,9 @@ class ComparatorResult
     /**
      * Returns variable name for user value extracted form segment
      * @param string $name
-     * @return ComparatorResult
+     * @return ComparisonResult
      */
-    public function setSegmentName(string $name = null) : ComparatorResult
+    public function setSegmentName(string $name = null) : ComparisonResult
     {
         $this->segmentName = $name;
         return $this;
@@ -65,9 +65,9 @@ class ComparatorResult
     /**
      * Sets a user value extracted from segment
      * @param int|float|string $value
-     * @return ComparatorResult
+     * @return ComparisonResult
      */
-    public function setSegmentValue($value = null) : ComparatorResult
+    public function setSegmentValue($value = null) : ComparisonResult
     {
         $this->segmentValue = $value;
         return $this;
@@ -85,9 +85,9 @@ class ComparatorResult
     /**
      * Sets the success flag
      * @param bool $flag
-     * @return ComparatorResult
+     * @return ComparisonResult
      */
-    public function setIsSuccess(bool $flag = false) : ComparatorResult
+    public function setIsSuccess(bool $flag = false) : ComparisonResult
     {
         $this->success = $flag;
         return $this;

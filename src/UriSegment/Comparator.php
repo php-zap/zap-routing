@@ -43,12 +43,12 @@ class Comparator
 
     /**
      * Compares $actualString against $templateString and returns a result object with all extracted info
-     * @return ComparatorResult
+     * @return ComparisonResult
      */
-    public function compare() : ComparatorResult
+    public function compare() : ComparisonResult
     {
         $segmentTemplate = new UriSegmentTemplate($this->templateString);
-        return ComparatorResult::create()
+        return ComparisonResult::create()
             ->setIsSuccess($segmentTemplate->matches($this->actualString))
             ->setSegmentName($segmentTemplate->getName())
             ->setSegmentValue($segmentTemplate->convertValueToDetectedType($this->actualString));
