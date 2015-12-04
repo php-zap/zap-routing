@@ -3,13 +3,15 @@
 namespace Zap\Routing;
 
 use Zap\Routing\Exceptions\InvalidRouteException;
+use Zap\Routing\Interfaces\IControllerDispatcher;
+use Zap\Routing\Interfaces\IRoute;
 
 /**
  * Class Route
  * @package Zap\Routing
  * @author Gabor Zelei
  */
-class Route
+class Route implements IRoute
 {
     /**
      * Default method @todo: remove once enum is available in Zap\Http
@@ -50,7 +52,7 @@ class Route
      * Route constructor.
      * @param string $uri
      */
-    public function __construct(string $uri)
+    public function __construct(\string $uri)
     {
         $this->uri = '/' . trim($uri, '/');
     }
@@ -60,7 +62,7 @@ class Route
      * @param string $uri
      * @return Route
      */
-    public static function define(string $uri) : Route
+    public static function define(\string $uri) : Route
     {
         return new static($uri);
     }
@@ -69,7 +71,7 @@ class Route
      * Gets route URI
      * @return string
      */
-    public function getUri() : string
+    public function getUri() : \string
     {
         return $this->uri;
     }
@@ -78,7 +80,7 @@ class Route
      * Gets HTTP request method for route
      * @return string
      */
-    public function getMethod() : string
+    public function getMethod() : \string
     {
         return $this->method;
     }
@@ -86,9 +88,9 @@ class Route
     /**
      * Sets HTTP request method for route
      * @param string $method
-     * @return Route
+     * @return IRoute
      */
-    public function setMethod(string $method) : Route
+    public function setMethod(\string $method) : IRoute
     {
         $this->method = $method;
         return $this;
@@ -108,9 +110,9 @@ class Route
      * Callback will be executed when the route is dispatched
      * Having a valid controller class and method set for this route will override callback settings set here
      * @param \Closure $callback
-     * @return Route
+     * @return IRoute
      */
-    public function setCallback(\Closure $callback) : Route
+    public function setCallback(\Closure $callback) : IRoute
     {
         $this->callback = $callback;
         return $this;
@@ -118,9 +120,9 @@ class Route
 
     /**
      * Gets ControllerCaller for this route
-     * @return ControllerDispatcher
+     * @return IControllerDispatcher
      */
-    public function getControllerDispatcher() : ControllerDispatcher
+    public function getControllerDispatcher() : IControllerDispatcher
     {
         return new ControllerDispatcher($this);
     }
@@ -129,9 +131,9 @@ class Route
      * Sets controller class and method name for this route
      * @param string $fullClassName
      * @param string $methodName
-     * @return Route
+     * @return IRoute
      */
-    public function setController(string $fullClassName, string $methodName) : Route
+    public function setController(\string $fullClassName, \string $methodName) : IRoute
     {
         $this->controllerClass = $fullClassName;
         $this->controllerMethod = $methodName;
@@ -142,7 +144,7 @@ class Route
      * Returns full namespaces classpath for any configured controller class for this route
      * @return string
      */
-    public function getControllerClass() : string
+    public function getControllerClass() : \string
     {
         return $this->controllerClass;
     }
@@ -151,7 +153,7 @@ class Route
      * Returns method to call on controller class when processing route
      * @return string
      */
-    public function getControllerMethod() : string
+    public function getControllerMethod() : \string
     {
         return $this->controllerMethod;
     }
@@ -168,9 +170,9 @@ class Route
     /**
      * Stores a list of user variables to pass to controller/callback when route is processed
      * @param array $userVariables
-     * @return Route
+     * @return IRoute
      */
-    public function setUserVariables(array $userVariables = []) : Route
+    public function setUserVariables(array $userVariables = []) : IRoute
     {
         $this->userVariables = $userVariables;
         return $this;
@@ -198,5 +200,17 @@ class Route
         } catch (InvalidRouteException $e) {
             return $e;                  // @todo change to proper Zap\Http\Response instance
         }
+    }
+
+    /**
+     * Registers route against router
+     * @param Router|null $router
+     * @return IRoute
+     */
+    public function register(Router $router = null) : IRoute
+    {
+        $router = is_null($router) ? Router::get() : $router;
+        $router->addRoute($this);
+        return $this;
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
 namespace Zap\Routing;
+
+use Zap\Routing\Interfaces\IMatcher;
+use Zap\Routing\Interfaces\IRoute;
 use Zap\Routing\UriSegment\Comparator;
 
 /**
@@ -8,7 +11,7 @@ use Zap\Routing\UriSegment\Comparator;
  * @package Zap\Routing
  * @author Gabor Zelei
  */
-class Matcher
+class Matcher implements IMatcher
 {
     const SEGMENT_SEPARATOR = '/';
 
@@ -37,9 +40,9 @@ class Matcher
      * Attempts to find a matching route for input $uri and $method
      * @param string $uri
      * @param string $method
-     * @return Route|null
+     * @return IRoute
      */
-    public function findMatch(string $uri, string $method)
+    public function findMatch(\string $uri, \string $method)
     {
         foreach ($this->router->getRouteCollection() as $route) {
             if ($this->isRouteAMatch($route, $uri, $method)) {
@@ -56,14 +59,22 @@ class Matcher
      * Also extracts user variables passed for Route from input URI segments
      * @param array $uriTemplateSegments
      * @param array $inputUriSegments
+     * @param Comparator|null $comparator
      * @return bool
      */
-    private function compareSegmentLists(array $uriTemplateSegments, array $inputUriSegments) : bool
-    {
+    private function compareSegmentLists(
+        array $uriTemplateSegments,
+        array $inputUriSegments,
+        Comparator $comparator = null
+    ) : \bool {
         $this->routeVariablesBuffer = [];
+        $comparator = is_null($comparator) ? new Comparator() : $comparator;
 
         foreach ($inputUriSegments as $position => $inputSegment) {
-            $result = Comparator::create($uriTemplateSegments[$position], $inputSegment)->compare();
+            $result = $comparator
+                ->setTemplateString($uriTemplateSegments[$position])
+                ->setActualValue($inputSegment)
+                ->compare();
 
             if (!$result->isSuccess()) {
                 return false;
@@ -81,12 +92,12 @@ class Matcher
 
     /**
      * Returns true if Route matches input $uri and $method, false otherwise
-     * @param Route $route
+     * @param IRoute $route
      * @param string $uri
      * @param string $method
      * @return bool
      */
-    private function isRouteAMatch(Route $route, string $uri, string $method) : bool
+    private function isRouteAMatch(IRoute $route, \string $uri, \string $method) : \bool
     {
         if ($route->getMethod() == $method) {
 
@@ -107,7 +118,7 @@ class Matcher
      * @param string $uri
      * @return array
      */
-    private function sliceUri(string $uri) : array
+    private function sliceUri(\string $uri) : array
     {
         return explode(static::SEGMENT_SEPARATOR, $uri);
     }

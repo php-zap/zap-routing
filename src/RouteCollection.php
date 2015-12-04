@@ -2,6 +2,8 @@
 
 namespace Zap\Routing;
 
+use Zap\Routing\Interfaces\IRoute;
+
 /**
  * Class RouteCollection
  * @package Zap\Routing
@@ -16,10 +18,10 @@ class RouteCollection implements \ArrayAccess
 
     /**
      * Adds a route to collection
-     * @param Route $route
+     * @param IRoute $route
      * @return RouteCollection
      */
-    public function add(Route $route) : RouteCollection
+    public function add(IRoute $route) : RouteCollection
     {
         $this->offsetSet($route->getUri(), $route);
         return $this;
@@ -27,7 +29,7 @@ class RouteCollection implements \ArrayAccess
 
     /**
      * Removes a route from collection
-     * @param Route|string $route
+     * @param IRoute|string $route
      * @return RouteCollection
      */
     public function remove($route) : RouteCollection
@@ -40,9 +42,9 @@ class RouteCollection implements \ArrayAccess
     /**
      * Finds a route by its URI
      * @param string $uri
-     * @return Route
+     * @return IRoute
      */
-    public function find(string $uri) : Route
+    public function find(\string $uri) : IRoute
     {
         return $this->offsetGet($uri);
     }
@@ -58,9 +60,9 @@ class RouteCollection implements \ArrayAccess
 
     /**
      * @param string $offset
-     * @return Route
+     * @return IRoute
      */
-    public function offsetGet($offset) : Route
+    public function offsetGet($offset) : IRoute
     {
         if ($this->offsetExists($offset)) {
             return $this->routes[$offset];
@@ -71,12 +73,12 @@ class RouteCollection implements \ArrayAccess
 
     /**
      * @param string $offset
-     * @param Route $value
+     * @param IRoute $value
      * @return $this
      */
     public function offsetSet($offset, $value)
     {
-        if (!$value instanceof Route) {
+        if (!$value instanceof IRoute) {
             throw new \InvalidArgumentException();
         }
 

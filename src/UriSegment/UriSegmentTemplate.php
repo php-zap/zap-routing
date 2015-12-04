@@ -44,7 +44,7 @@ class UriSegmentTemplate
      * UriSegmentTemplate constructor.
      * @param string $templateString
      */
-    public function __construct(string $templateString)
+    public function __construct(\string $templateString)
     {
         $this->rawTemplateString = trim($templateString);
         $this->extractSegmentConfig();
@@ -54,7 +54,7 @@ class UriSegmentTemplate
      * @param string $actualString
      * @return bool
      */
-    public function matches(string $actualString = null) : bool
+    public function matches(\string $actualString = null) : \bool
     {
         switch ($this->segmentType) {
             case static::SEGMENT_TYPE_INT:
@@ -75,7 +75,7 @@ class UriSegmentTemplate
      * Returns variable name associated with the value extracted from this segment
      * @return string
      */
-    public function getName() : string
+    public function getName() : \string
     {
         return $this->segmentName;
     }
@@ -128,7 +128,7 @@ class UriSegmentTemplate
      * @param string $templateString
      * @return array
      */
-    private function getSegmentTemplateParts(string $templateString)
+    private function getSegmentTemplateParts(\string $templateString)
     {
         $parts = explode(static::PARTS_SEPARATOR, $templateString);
 
@@ -144,7 +144,7 @@ class UriSegmentTemplate
      * @param string $segmentType
      * @return string
      */
-    private function getValidSegmentType(string $segmentType = '') : string
+    private function getValidSegmentType(\string $segmentType = '') : \string
     {
         $validSegmentTypes = [
             static::SEGMENT_TYPE_INT,

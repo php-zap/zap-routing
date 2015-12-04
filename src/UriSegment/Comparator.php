@@ -2,17 +2,25 @@
 
 namespace Zap\Routing\UriSegment;
 
+use Zap\Routing\Interfaces\UriSegment\IComparator;
+use Zap\Routing\Interfaces\UriSegment\IComparisonResult;
+
 /**
  * Class Comparator
  * @package Zap\Routing\UriSegment
  * @author Gabor Zelei
  */
-class Comparator
+class Comparator implements IComparator
 {
     /**
      * @var string
      */
     private $actualString;
+
+    /**
+     * @var IComparisonResult
+     */
+    private $result;
 
     /**
      * @var string
@@ -22,33 +30,52 @@ class Comparator
     /**
      * Comparator constructor.
      * @param string $templateString
-     * @param string $actualString
+     * @param string|null $actualValue
+     * @param IComparisonResult|null $resultContainer    For DI, mainly testing
      */
-    public function __construct(string $templateString, string $actualString = null)
-    {
-        $this->actualString = $actualString;
+    public function __construct(
+        \string $templateString = '',
+        \string $actualValue = null,
+        IComparisonResult $resultContainer = null
+    ) {
+        $this->actualString = $actualValue;
+        $this->result = is_null($resultContainer) ? new ComparisonResult() : $resultContainer;
         $this->templateString = $templateString;
     }
 
     /**
-     * Chainable factory method for convenience
-     * @param string $templateString
-     * @param string $actualString
-     * @return Comparator
+     * @param null|int|float|string $actualValue
+     * @return IComparator
      */
-    public static function create(string $templateString, string $actualString = null) : Comparator
+    public function setActualValue($actualValue = null)
     {
-        return new static($templateString, $actualString);
+        $this->actualString = strval($actualValue);
+        return $this;
+    }
+
+    /**
+     * @param string|null $templateString
+     * @return IComparator
+     */
+    public function setTemplateString(\string $templateString = null)
+    {
+        if (is_null($templateString)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->templateString = $templateString;
+        return $this;
     }
 
     /**
      * Compares $actualString against $templateString and returns a result object with all extracted info
-     * @return ComparisonResult
+     * @param UriSegmentTemplate|null $segmentTemplate
+     * @return IComparisonResult
      */
-    public function compare() : ComparisonResult
+    public function compare(UriSegmentTemplate $segmentTemplate = null) : IComparisonResult
     {
-        $segmentTemplate = new UriSegmentTemplate($this->templateString);
-        return ComparisonResult::create()
+        $segmentTemplate = is_null($segmentTemplate) ? new UriSegmentTemplate($this->templateString) : $segmentTemplate;
+        return $this->result
             ->setIsSuccess($segmentTemplate->matches($this->actualString))
             ->setSegmentName($segmentTemplate->getName())
             ->setSegmentValue($segmentTemplate->convertValueToDetectedType($this->actualString));

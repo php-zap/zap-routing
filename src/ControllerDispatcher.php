@@ -3,16 +3,18 @@
 namespace Zap\Routing;
 
 use Zap\Routing\Exceptions\InvalidRouteException;
+use Zap\Routing\Interfaces\IControllerDispatcher;
+use Zap\Routing\Interfaces\IRoute;
 
 /**
  * Class ControllerCaller
  * @package Zap\Routing
  * @author Gabor Zelei
  */
-class ControllerDispatcher
+class ControllerDispatcher implements IControllerDispatcher
 {
     /**
-     * @var Route
+     * @var IRoute
      */
     private $route;
 
@@ -23,10 +25,10 @@ class ControllerDispatcher
 
     /**
      * ControllerCaller constructor.
-     * @param Route $route
+     * @param IRoute $route
      * @throws InvalidRouteException
      */
-    public function __construct(Route $route)
+    public function __construct(IRoute $route)
     {
         $this->route = $route;
 

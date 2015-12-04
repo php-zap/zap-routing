@@ -3,6 +3,8 @@
 namespace Zap\Routing;
 
 use Zap\Routing\Exceptions\InvalidRouteException;
+use Zap\Routing\Interfaces\IMatcher;
+use Zap\Routing\Interfaces\IRoute;
 
 /**
  * Class Router
@@ -17,7 +19,7 @@ class Router
     private static $instance;
 
     /**
-     * @var Matcher
+     * @var IMatcher
      */
     private $matcher;
 
@@ -57,10 +59,10 @@ class Router
 
     /**
      * Adds a route to the collection this router knows about
-     * @param Route $route
+     * @param IRoute $route
      * @return Router
      */
-    public function addRoute(Route $route) : Router
+    public function addRoute(IRoute $route) : Router
     {
         $this->routes->add($route);
         return $this;
@@ -72,7 +74,7 @@ class Router
      * @param string $method
      * @return mixed|null
      */
-    public function fetch(string $uri, string $method)
+    public function fetch(\string $uri, \string $method)
     {
         try {
             $route = $this->matcher->findMatch($uri, $method);
