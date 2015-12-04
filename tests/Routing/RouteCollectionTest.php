@@ -3,11 +3,12 @@
 namespace Test\Routing;
 
 use Test\BaseTestCase;
+use Zap\Routing\RouteCollection;
 
 class RouteCollectionTest extends BaseTestCase
 {
-    public function testStub()
+    public function test__construct()
     {
-        $this->assertTrue(true);
+        $this->assertInstanceOf(\ArrayAccess::class, new RouteCollection());
     }
 }
